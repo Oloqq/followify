@@ -3,3 +3,4 @@ env.ps1
 .data/
 *.log
 logs/
+test.js
