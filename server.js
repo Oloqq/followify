@@ -6,6 +6,9 @@ const bodyParser = require("body-parser");
 const app = express();
 const session = require('express-session');
 const db = require('./database');
+const log = require('./log');
+
+log.info('Booting up... ', new Date());
 
 // App config
 app.use(express.static("public"));
@@ -29,5 +32,5 @@ app.get('/', (req, res)=>{
 
 // Start the server
 var listener = app.listen(process.env.PORT, () => {
-  console.log(`Your app is listening on port ${listener.address().port}`);
+  log.info(`App is listening on port ${listener.address().port}`);
 });

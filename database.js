@@ -1,5 +1,4 @@
 // Init sqlite db
-const { log } = require("console");
 const fs = require("fs");
 const dbFile = ".data/followify.db";
 
@@ -8,6 +7,34 @@ const dbFile = ".data/followify.db";
 const exists = fs.existsSync(dbFile);
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(dbFile);
+const log = require('./log');
+
+function putUser(id, accessToken, expiry, refreshToken) {
+	var sql = `INSERT INTO user(id, access_token, expiry, refresh_token) 
+		VALUES (?, ?, ?, ?) 
+		ON CONFLICT(id) DO UPDATE 
+			SET access_token=?2, expiry=?3, refresh_token=?4
+			WHERE id=?1`;
+	db.run(sql, [id, accessToken, expiry, refreshToken], err => {
+		if (err) {
+			log.error('Failed to put a user in the database: ', err);
+			return false;
+		} else {
+			log.info('User data updated/inserted for: ', id);
+			return true;
+		}
+	});
+}
+
+// function print() {
+// 	db.all(`SELECT * FROM user`, (err, users)=>{
+// 		console.log(users);
+// 	})
+// }
+
+module.exports = {
+	putUser,
+}
 
 (function init() {
 	if (!exists) {
@@ -46,52 +73,9 @@ const db = new sqlite3.Database(dbFile);
 					artist_id varchar(30) NOT NULL,
 					playlist_id varchar(30) NOT NULL,
 					FOREIGN KEY (artist_id) REFERENCES artist(id) ON DELETE CASCADE,
-					FOREIGN KEY (playlist_id) REFERENCES playlist(id) ON DELETE CACADE
+					FOREIGN KEY (playlist_id) REFERENCES playlist(id) ON DELETE CASCADE
 				)
-			`)
-
-			// (function test() {
-			// 	//test
-			// 	db.run(`
-			// 		INSERT INTO user (id) VALUES ('sex'), ('cum');
-			// 	`);
-
-			// 	(function insertMany() {
-			// 		let values = [['aaa', 'fa', 'sex', 8], ['eee', 'fef', 'sex', 12], ['iii', 'yuy', 'cum', 54]];
-			// 		let placeholders = values.map((vset) => '(?, ?, ?, ?)').join(',');
-			// 		let sql = "INSERT INTO playlist (id, name, user_id, max_track_age) VALUES " + placeholders;
-			// 		db.run(sql, values.flat(), err=>{
-			// 			console.log(err);
-			// 		});
-			// 	})();
-
-			// 	db.all('SELECT * FROM playlist', (err, rows)=>{
-			// 		console.log(rows);
-			// 	});
-
-			// 	db.run('DELETE FROM user WHERE id="sex"');
-
-			// 	db.all('SELECT * FROM playlist', (err, rows)=>{
-			// 		console.log(rows);
-			// 	});
-			// })();
+			`);
 		});
 	}
 })();
-
-function putUser(id, accessToken, expiry, refreshToken) {
-	db.run(`INSERT INTO user(id, access_token, expiry, refresh_token) 
-	VALUES (?, ?, ?, ?)`, [id, accessToken, expiry, refreshToken], 
-	err => {
-		if (err) {
-			console.log(err);
-			return false;
-		} else {
-			return true;
-		}
-	});
-}
-
-module.exports = {
-	putUser
-}
