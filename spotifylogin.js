@@ -44,7 +44,7 @@ module.exports = function(app, scopes) {
 		.then((result)=>{
 			if (result.res.statusCode != 200) { // != success
 				res.writeHeader(200, {'Content-Type': 'text/html'});
-				//big brain usage of quotation marks forces number to string conversion
+				//big brain usage of empty string forces number to string conversion
 				res.write('' + result.res.statusCode);
 				res.write('<br>Failed trading code for token');
 				res.write('<br><a href="/">homepage</a>');
@@ -69,6 +69,7 @@ module.exports = function(app, scopes) {
 			.then((result)=>{
 				let profile = JSON.parse(result.data.toString());
 				db.putUser(profile.id, authData.access_token, expiry, authData.refresh_token);
+				req.session.userid = profile.id;
 				res.redirect('/');
 			})
 			.catch(err=>{

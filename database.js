@@ -18,10 +18,8 @@ function putUser(id, accessToken, expiry, refreshToken) {
 	db.run(sql, [id, accessToken, expiry, refreshToken], err => {
 		if (err) {
 			log.error('Failed to put a user in the database: ', err);
-			return false;
 		} else {
 			log.info('User data updated/inserted for: ', id);
-			return true;
 		}
 	});
 }
@@ -34,8 +32,9 @@ function putUser(id, accessToken, expiry, refreshToken) {
 
 module.exports = {
 	putUser,
-}
+};
 
+//IIFEs
 (function init() {
 	if (!exists) {
 		// Enable foreign keys

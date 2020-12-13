@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>siem</title>
+</head>
+<body>
+  <a href='/refresh'><button>refresh</button></a>
+  <ol>
+    <% for (let i = 0; following && i < following.length; i++) { %> 
+      <li><%= following[i] %> </li>
+    <% } %> 
+  </ol>
+</body>
+</html>
