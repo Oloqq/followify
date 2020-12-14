@@ -7,7 +7,7 @@ const dbFile = ".data/followify.db";
 const exists = fs.existsSync(dbFile);
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(dbFile);
-const log = require('./log');
+const log = require('simple-node-logger').createSimpleLogger('logs/database.log');
 
 function putUser(id, accessToken, expiry, refreshToken) {
 	var sql = `INSERT INTO user(id, access_token, expiry, refresh_token) 
@@ -17,10 +17,20 @@ function putUser(id, accessToken, expiry, refreshToken) {
 			WHERE id=?1`;
 	db.run(sql, [id, accessToken, expiry, refreshToken], err => {
 		if (err) {
-			log.error('Failed to put a user in the database: ', err);
+			log.error('Failed to put a user: ', err);
 		} else {
-			log.info('User data updated/inserted for: ', id);
+			log.info('User data upserted for: ', id);
 		}
+	});
+}
+
+function getUser(id) {
+	var sql = `SELECT * FROM user WHERE id=${id}`;
+	db.get(sql, (err, row)=>{
+		if (err) {
+			log.error('Failed to get user data');
+		}
+		console.log(row);
 	});
 }
 
