@@ -5,13 +5,16 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
 const session = require('express-session');
+const useragent = require('express-useragent');
 const db = require('./database');
 const log = require('./log');
+const spotifuncs = require('./spotifuncs');
 
 log.info('Booting up... ', new Date());
 
 // App config
 app.use(express.static("public"));
+app.use(useragent.express());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(session({
@@ -32,14 +35,24 @@ app.get('/', (req, res)=>{
   if (!req.session.userid) {
     res.sendFile(`${__dirname}/views/login.html`);
   } else {
-    let data = {};
-    data.following = ['kali', 'koza'];
-    res.render(`${__dirname}/views/index.ejs`, data);
+    if (req.useragent.isMobile) {
+      res.sendFile(`${__dirname}/views/index-mobile.html`);
+    } else {
+      res.sendFile(`${__dirname}/views/index.html`);
+    }
   }
 });
 
-app.get('/refresh', (req, res)=>{
-  res.send('coming soon');
+app.get('/following', (req, res) => {
+  if (!req.session.userid) {
+    res.send({
+      status: 'error',
+      message: 'no session'
+    });
+    return;
+  } else {
+    res.send(spotifuncs.getFollowing(req.session.userid));
+  }
 });
 
 // Start the server

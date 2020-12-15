@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Followify</title>
+	<link rel=stylesheet type=text/css href="/style.css">
+	<link rel=stylesheet type=text/css href="/columns.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+</head>
+<body>
+	<header>
+		<h1>Followify</h1><p> - I swear I'm gonna design this website one day</p>
+		<hr>
+	</header>
+
+	<main class=container>
+		<div class="inline3" id=left>
+			<div class="header">
+				<p>Artists you're following</p><hr>
+			</div>
+			<button id=buttonRefresh disabled>Refresh</button>
+			<hr>
+			<div id=loadingFollowing>Loading...</div>
+			<ul id=followingList>
+				
+			</ul>
+		</div>
+		<div class="inline3" id=middle>
+			<div class="header">
+				<p>Artists for the playlist</p><hr>
+			</div>
+
+		</div>
+		<div class="inline3" id=right>
+			<div class="header">
+				<p>Your playlists</p><hr>
+			</div>
+			<button id=buttonCreateFromAll disabled>Create auto-playlist with new releases from all your following</button>
+			<hr>
+			<div id=loadingPlaylists>Loading...</div>
+		</div>
+	</main>
+
+	<script src="/render.js"></script>
+	<script src="/interaction.js"></script>
+</body>
+</html>

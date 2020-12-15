@@ -8,6 +8,7 @@
 <body>
   <a href='/refresh'><button>refresh</button></a>
   <ol>
+    <%# display following %> 
     <% for (let i = 0; following && i < following.length; i++) { %> 
       <li><%= following[i] %> </li>
     <% } %> 

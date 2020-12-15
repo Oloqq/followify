@@ -68,7 +68,7 @@ module.exports = function(app, scopes) {
 			})
 			.then((result)=>{
 				let profile = JSON.parse(result.data.toString());
-				db.putUser(profile.id, authData.access_token, expiry, authData.refresh_token);
+				db.putUser(profile.id, authData.access_token, expiry.toUTCString(), authData.refresh_token);
 				req.session.userid = profile.id;
 				res.redirect('/');
 			})

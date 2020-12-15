@@ -1,0 +1,51 @@
+header {
+	display: block;
+	height: 7vh;
+}
+
+main {
+	display: block;
+	height: 87vh;
+}
+
+header > h1 {
+	display: inline;
+}
+
+header > p {
+	display: inline;
+	font-style: italic;
+	color: gainsboro;
+	margin-left: 20px;
+}
+
+div.inline3 {
+	display: block;
+	float: left;
+	width: 33%;
+	padding: 8px;
+	padding-top: 0;
+}
+
+div.inline3 hr, div.inline3 button {
+	display: block;
+	width: 90%;
+	margin: auto;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+div.inline3 > * {
+	margin-left: 8px;
+}
+
+.header {
+	text-align: center;
+	margin-left: initial !important;
+	padding: initial;
+}
+
+#middle {
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+}

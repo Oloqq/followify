@@ -15,15 +15,28 @@ var dropAll = [
 	'DROP TABLE playlist',
 	'DROP TABLE user'
 ];
+var truncate = [
+	'DELETE FROM user'
+]
 
-var orders = dropAll;
+var orders = none;
 
 function foo(q) {
-	db.run(q, err=>{
-		if (err) console.log(err);
-		else console.log('completed');
-		rl.question('Query: ', foo);
-	});
+	if (q.toUpperCase().startsWith('SELECT')) {
+		db.all(q, (res, err)=>{
+			if (err) console.log(err);
+			else {
+				console.log(res);
+			}
+			rl.question('Query: ', foo);
+		});
+	} else {
+		db.run(q, err=>{
+			if (err) console.log(err);
+			else console.log('completed');
+			rl.question('Query: ', foo);
+		});
+	}
 }
 
 db.serialize(()=>{

@@ -17,7 +17,7 @@ function putUser(id, accessToken, expiry, refreshToken) {
 			WHERE id=?1`;
 	db.run(sql, [id, accessToken, expiry, refreshToken], err => {
 		if (err) {
-			log.error('Failed to put a user: ', err);
+			log.error('Failed to put a user. ', err);
 		} else {
 			log.info('User data upserted for: ', id);
 		}
@@ -26,11 +26,14 @@ function putUser(id, accessToken, expiry, refreshToken) {
 
 function getUser(id) {
 	var sql = `SELECT * FROM user WHERE id=${id}`;
-	db.get(sql, (err, row)=>{
-		if (err) {
-			log.error('Failed to get user data');
-		}
-		console.log(row);
+	return new Promise((resolve, reject) =>{
+		db.get(sql, (err, row)=>{
+			if (err) {
+				log.error('Failed to get user data.', err);
+				reject(false);
+			}
+			resolve(row);
+		});
 	});
 }
 
@@ -42,6 +45,7 @@ function getUser(id) {
 
 module.exports = {
 	putUser,
+	getUser
 };
 
 //IIFEs
