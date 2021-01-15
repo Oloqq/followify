@@ -51,7 +51,11 @@ app.get('/following', (req, res) => {
     });
     return;
   } else {
-    res.send(spotifuncs.getFollowing(req.session.userid));
+    spotifuncs.getFollowing(req.session.userid)
+    .then((result)=>{
+      // console.log(result)
+      res.send(result);
+    });
   }
 });
 

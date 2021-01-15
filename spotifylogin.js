@@ -10,6 +10,7 @@ const { Base64 } = require('js-base64');
 const urllib = require('urllib');
 const db = require('./database');
 const log = require('./log');
+const spoti = require('./spotifuncs')
 
 module.exports = function(app, scopes) {
 	for (let s of scopes) {
@@ -53,12 +54,12 @@ module.exports = function(app, scopes) {
 			}
 
 			var authData = JSON.parse(result.data.toString());
-			var expiry = getExpiry(authData.expires_in);
-			function getExpiry(expiresIn) {
-				let expiry = new Date();
-				expiry.setSeconds(expiry.getSeconds() + expiresIn);
-				return expiry;
-			}
+			// var expiry = getExpiry(authData.expires_in);
+			// function getExpiry(expiresIn) {
+			// 	let expiry = new Date();
+			// 	expiry.setSeconds(expiry.getSeconds() + expiresIn);
+			// 	return expiry;
+			// }
 
 			urllib.request('https://api.spotify.com/v1/me', {
 				method: 'GET',
@@ -68,7 +69,8 @@ module.exports = function(app, scopes) {
 			})
 			.then((result)=>{
 				let profile = JSON.parse(result.data.toString());
-				db.putUser(profile.id, authData.access_token, expiry.toUTCString(), authData.refresh_token);
+				spoti.putUser(profile.id, authData.access_token, authData.expires_in, authData.refresh_token);
+				// db.putUser(profile.id, authData.access_token, expiry.toUTCString(), authData.refresh_token);
 				req.session.userid = profile.id;
 				res.redirect('/');
 			})

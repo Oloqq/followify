@@ -1,8 +1,10 @@
+var refreshTimeout = 1000;
+
 $('#buttonRefresh').click(function (ev) {
 	//prevent continuous requests
 	var elem = $(this);
 	elem.attr('disabled', true);
-	setTimeout(()=>elem.attr('disabled', false), 10000);
+	setTimeout(()=>elem.attr('disabled', false), refreshTimeout);
 	$('#loadingFollowing').text('Loading...');
 	$('#loadingFollowing').css('visibility', 'visible');
 

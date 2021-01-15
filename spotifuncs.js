@@ -8,7 +8,10 @@ const { Base64 } = require('js-base64');
 const clientId     = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 
-//should I refactor these functions into a User class?
+async function putUser(id, accessToken, expiresIn, refreshToken) {
+	let expiry = getExpiry(expiresIn);
+	db.putUser(id, accessToken, expiry.toUTCString(), refreshToken);
+}
 
 async function refreshToken(user) {
 	var result = await urllib.request('https://accounts.spotify.com/api/token', {
@@ -28,22 +31,16 @@ async function refreshToken(user) {
 	}
 	db.putUser(user.id, data.access_token, getExpiry(data.expires_in), refresh_token);
 	return data.access_token;
-
-	function getExpiry(expiresIn) {
-		let expiry = new Date();
-		expiry.setSeconds(expiry.getSeconds() + expiresIn);
-		return expiry;
-	}
 }
 
 async function getToken(userid) {
 	var user = await db.getUser(userid);
 	var expiry = new Date(user.expiry);
 	var now = new Date();
-	console.log(expiry, now);
+	// console.log(expiry, now);
 	now.setMinutes(now.getMinutes() - 1);
 	if (now > expiry) {
-		user.access_token = refreshToken(user);
+		user.access_token = await refreshToken(user);
 	}
 	return user.access_token;
 }
@@ -51,8 +48,16 @@ async function getToken(userid) {
 async function getFollowing(userid) {
 	var token = await getToken(userid);
 	console.log(token);
+	return ['ĄĄĄĄĄ'];
+}
+
+function getExpiry(expiresIn) {
+	let expiry = new Date();
+	expiry.setSeconds(expiry.getSeconds() + expiresIn);
+	return expiry;
 }
 
 module.exports = {
-	getFollowing
+	getFollowing,
+	putUser
 };
