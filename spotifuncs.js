@@ -1,6 +1,7 @@
 'use strict';
 
 const urllib = require('urllib');
+const querystring = require('querystring');
 const db = require('./database');
 const log = require('./log');
 const { Base64 } = require('js-base64');
@@ -47,8 +48,31 @@ async function getToken(userid) {
 
 async function getFollowing(userid) {
 	var token = await getToken(userid);
-	console.log(token);
-	return ['ĄĄĄĄĄ'];
+	var artists = [];
+	var url = 'https://api.spotify.com/v1/me/following?' + querystring.stringify({
+		type: 'artist',
+		limit: 50
+	});
+	
+	while (true) {
+		let result = await urllib.request(url, {
+			method: 'GET',
+			headers: {
+				'Authorization': 'Bearer ' + token
+			},
+		})
+		var data = JSON.parse(result.data.toString()).artists;
+		data.items.forEach(artist => {
+			artists.push({id: artist.id, name: artist.name});
+		});
+		
+		if (data.next) {
+			url = data.next;
+		} else {
+			break;
+		}
+	}
+	return artists;
 }
 
 function getExpiry(expiresIn) {

@@ -53,7 +53,6 @@ app.get('/following', (req, res) => {
   } else {
     spotifuncs.getFollowing(req.session.userid)
     .then((result)=>{
-      // console.log(result)
       res.send(result);
     });
   }
@@ -63,3 +62,7 @@ app.get('/following', (req, res) => {
 var listener = app.listen(process.env.PORT, () => {
   log.info(`App is listening on port ${listener.address().port}`);
 });
+
+// Testing
+// var id = 11182739993;
+// spotifuncs.getFollowing(id);

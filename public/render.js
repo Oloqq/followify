@@ -1,4 +1,7 @@
 function renderFollowing(data) {
-	console.log(data);
-	var list = $('followingList');
+	var list = $('#followingList');
+	data.forEach(artist => {
+		console.log(artist);
+		list.append(`<li>${artist}</li>`);
+	});
 }

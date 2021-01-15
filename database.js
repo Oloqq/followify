@@ -37,6 +37,10 @@ function getUser(id) {
 	});
 }
 
+function putArtist(id, name) {
+	
+}
+
 // function print() {
 // 	db.all(`SELECT * FROM user`, (err, users)=>{
 // 		console.log(users);
@@ -45,7 +49,8 @@ function getUser(id) {
 
 module.exports = {
 	putUser,
-	getUser
+	getUser,
+	putArtist,
 };
 
 //IIFEs
