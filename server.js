@@ -18,7 +18,7 @@ app.use(useragent.express());
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(session({
-  secret: 'skrrt',
+  secret: process.env.SESSION_SECRET,
   saveUninitialized: true,
   resave: true,
 }));
