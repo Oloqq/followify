@@ -75,6 +75,10 @@ async function getFollowing(userid) {
 	return artists;
 }
 
+async function createFromAll(userid) {
+	var token = await getToken(userid);
+}
+
 function getExpiry(expiresIn) {
 	let expiry = new Date();
 	expiry.setSeconds(expiry.getSeconds() + expiresIn);
@@ -83,5 +87,6 @@ function getExpiry(expiresIn) {
 
 module.exports = {
 	getFollowing,
-	putUser
+	putUser,
+	createFromAll,
 };

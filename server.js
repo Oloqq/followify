@@ -15,8 +15,8 @@ log.info('Booting up... ', new Date());
 // App config
 app.use(express.static("public"));
 app.use(useragent.express());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(express.urlencoded({extended: true}));
+app.use(express.json());
 app.use(session({
   secret: 'skrrt',
   saveUninitialized: true,
@@ -64,5 +64,6 @@ var listener = app.listen(process.env.PORT, () => {
 });
 
 // Testing
-// var id = 11182739993;
+var id = 11182739993;
 // spotifuncs.getFollowing(id);
+spotifuncs.createFromAll(id);

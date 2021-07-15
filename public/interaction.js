@@ -1,6 +1,6 @@
 var refreshTimeout = 1000;
 
-$('#buttonRefresh').click(function (ev) {
+$('#buttonRefresh').click(function(ev) {
 	//prevent continuous requests
 	var elem = $(this);
 	elem.attr('disabled', true);
@@ -23,3 +23,7 @@ $('#buttonRefresh').click(function (ev) {
 		}
 	});
 }).click();
+
+$('#buttonCreateFromAll').click(function(ev) {
+	console.log('not implemented');
+});
