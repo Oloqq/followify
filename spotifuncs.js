@@ -46,8 +46,8 @@ async function getToken(userid) {
 	return user.access_token;
 }
 
-async function getFollowing(userid) {
-	var token = await getToken(userid);
+async function getFollowing(userid, token=undefined) {
+	token = token ? token : await getToken(userid);
 	var artists = [];
 	var url = 'https://api.spotify.com/v1/me/following?' + querystring.stringify({
 		type: 'artist',
@@ -75,8 +75,42 @@ async function getFollowing(userid) {
 	return artists;
 }
 
+async function createPlaylist(userid, name, token=undefined)
+{
+	log.info(`Creating playlist. user=${userid}, playlist name=${name}`);
+
+	token = token ? token : await getToken(userid);
+	let result = await urllib.request(`https://api.spotify.com/v1/users/${userid}/playlists`, {
+		method: 'POST',
+		headers: {
+			'Authorization': 'Bearer ' + token,
+			'Content-Type': 'application/json'
+		},
+		data: {
+			"name": name,
+			"description": "🚂",
+			"public": false
+		}
+	});
+
+	if (result.res.statusCode != 200) { // didn't succeed
+		log.error(`Couldn't create playlist: ${result.res.statusCode}, `+
+			`user=${userid}, playlist name=${name}`)
+		return;
+	}
+
+	var data = JSON.parse(result.data.toString());
+	var id = data.id;
+	console.log(data);
+}
+
 async function createFromAll(userid) {
-	var token = await getToken(userid);
+	//TODO this function could probably be optimized with Promise.all()
+	log.info(`Creating playlist from all artists for user ${userid}`);
+	var token = getToken(userid);
+
+	var playlist = await createPlaylist(userid, "testlist", token=token);
+	var artists = await getFollowing(userid, token=token);
 }
 
 function getExpiry(expiresIn) {
