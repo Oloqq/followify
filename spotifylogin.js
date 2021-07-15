@@ -43,7 +43,7 @@ module.exports = function(app, scopes) {
 	
 		urllib.request('https://accounts.spotify.com/api/token', options)
 		.then((result)=>{
-			if (result.res.statusCode != 200) { // != success
+			if (result.res.statusCode != 200) { // didn't succeed
 				res.writeHeader(200, {'Content-Type': 'text/html'});
 				//big brain usage of empty string forces number to string conversion
 				res.write('' + result.res.statusCode);
