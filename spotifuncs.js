@@ -5,14 +5,10 @@ const querystring = require('querystring');
 const db = require('./database');
 const log = require('./log');
 const { Base64 } = require('js-base64');
+const { getExpiry } = require('./spotifylogin');
 
 const clientId     = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
-
-async function putUser(id, accessToken, expiresIn, refreshToken) {
-	let expiry = getExpiry(expiresIn);
-	db.putUser(id, accessToken, expiry.toUTCString(), refreshToken);
-}
 
 async function refreshToken(user) {
 	var result = await urllib.request('https://accounts.spotify.com/api/token', {
@@ -47,6 +43,7 @@ async function getToken(userid) {
 }
 
 async function getFollowing(userid, token=undefined) {
+	log.info(`Getting following of ${userid}`);
 	token = token ? token : await getToken(userid);
 	var artists = [];
 	var url = 'https://api.spotify.com/v1/me/following?' + querystring.stringify({
@@ -107,20 +104,13 @@ async function createPlaylist(userid, name, token=undefined)
 async function createFromAll(userid) {
 	//TODO this function could probably be optimized with Promise.all()
 	log.info(`Creating playlist from all artists for user ${userid}`);
-	var token = getToken(userid);
+	var token = await getToken(userid);
 
-	var playlist = await createPlaylist(userid, "testlist", token=token);
+	// var playlist = await createPlaylist(userid, "testlist", token=token);
 	var artists = await getFollowing(userid, token=token);
-}
-
-function getExpiry(expiresIn) {
-	let expiry = new Date();
-	expiry.setSeconds(expiry.getSeconds() + expiresIn);
-	return expiry;
 }
 
 module.exports = {
 	getFollowing,
-	putUser,
 	createFromAll,
 };

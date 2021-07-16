@@ -28,7 +28,7 @@ app.set('view engine', 'ejs');
 // Setup routing for spotify login
 const scopes = ['user-follow-read', 'playlist-modify-public',
  'playlist-modify-private'];
-require('./spotifylogin')(app, scopes);
+require('./spotifylogin').setupLogin(app, scopes);
 
 // Routing
 app.get('/', (req, res)=>{
