@@ -73,10 +73,30 @@ async function getToken(userid) {
 	return user.access_token;
 }
 
+async function addTracksToPlaylist(userId, playlistId, tracks, token=undefined) {
+	log.info(`Adding tracks ${tracks} to playlist ${playlistId}`);
+	token = token ? token : await getToken(userId);	
+	let result = await urllib.request(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+		method: 'POST',
+		headers: {
+			'Authorization': 'Bearer ' + token,
+			'Content-Type': 'application/json'
+		},
+		data: {
+			'uris': tracks
+		}
+	});
+
+	if (result.res.statusCode != 201) { // didn't succeed (201 == created)
+		log.error(`Couldn't add to playlist: ${result.res.statusCode}, `+
+			`playlist=${playlistId}, tracks=${tracks}`);
+		throw new APIError(result.res.statusCode);
+	}
+}
+
 async function getTracksFromAlbum(userId, albumId, token=undefined) {
 	log.info(`Getting tracks of album ${albumId}`);
 	token = token ? token : await getToken(userId);	
-	//https://api.spotify.com/v1/albums/{id}/tracks
 	var result = await urllib.request(
 		`https://api.spotify.com/v1/albums/${albumId}/tracks?` + querystring.stringify({
 			limit: '50'
@@ -170,15 +190,14 @@ async function createPlaylist(userid, name, token=undefined)
 		}
 	});
 
-	if (result.res.statusCode != 200) { // didn't succeed
+	if (result.res.statusCode != 201) { // didn't succeed
 		log.error(`Couldn't create playlist: ${result.res.statusCode}, `+
 			`user=${userid}, playlist name=${name}`)
 		return;
 	}
 
 	var data = JSON.parse(result.data.toString());
-	var id = data.id;
-	console.log(data);
+	return data.id;
 }
 
 async function createFromAll(userid) {
@@ -196,4 +215,6 @@ module.exports = {
 	getRecentAlbumsOfArtist,
 	getTracksFromAlbum,
 	APIError,
+	addTracksToPlaylist,
+	createPlaylist,
 };

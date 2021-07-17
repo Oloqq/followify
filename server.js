@@ -72,6 +72,9 @@ async function test() {
   var id = 11182739993;
   var artistId = '7jrtLe4eVfWhYWZn5vsopg'; // Hinol Polska Wersja
   var albumId = '2XhJJYqoUDAnfoOL6YNpLO'; // name: 'Od końca do początku',
+  var trackId = '3SkC2BjGzfbMd65MQ2snzX' // name: 'Nie potrzeba mi nic więcej',
+  var playlistId = '3QHzMmQfvuG3AQWybYyIIS';
+  var uris = [`spotify:track:${trackId}`];
     
   // spotifuncs.getFollowing(id);
   // spotifuncs.createFromAll(id);
@@ -83,8 +86,13 @@ async function test() {
     // var albums = await spotifuncs.getRecentAlbumsOfArtist(id, artistId, threshold);
     // console.log(albums);
 
-    var tracks = await spotifuncs.getTracksFromAlbum(id, albumId);
-    console.log(tracks);
+    // var tracks = await spotifuncs.getTracksFromAlbum(id, albumId);
+    // console.log(tracks);
+
+    // var playlistId = await spotifuncs.createPlaylist(id, 'Test z hinolem');
+    // console.log(playlistId);
+
+    spotifuncs.addTracksToPlaylist(id, playlistId, uris);
 
   } catch (error) {
     log.error(error);
@@ -92,6 +100,10 @@ async function test() {
 }
 test();
 
+//! it seems the date inserted into the database is always invalid
+
+//TODO rename userid to userId
 //TODO filter out singles reappearing in albums
 //TODO implement paging for getting albums
 //TODO implement paging for getting tracks for albums (super-edge case)
+//TODO pack the request stuff into a function? (mby a nested one?)
