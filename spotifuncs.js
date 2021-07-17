@@ -6,6 +6,7 @@ const db = require('./database');
 const log = require('./log');
 const { Base64 } = require('js-base64');
 const { getExpiry } = require('./spotifylogin');
+const { query } = require('express');
 
 const clientId     = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
@@ -14,12 +15,32 @@ function isValidDate(d) {
   return d instanceof Date && !isNaN(d);
 }
 
+function authorize()
+{
+	return 'Basic ' + Base64.encode(clientId + ':' + clientSecret);
+}
+
+class APIError extends Error {
+  constructor(...params) {
+    // Pass remaining arguments (including vendor specific ones) to parent constructor
+    super(...params)
+
+    // Maintains proper stack trace for where our error was thrown (only available on V8)
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, CustomError)
+    }
+
+    this.name = 'APIError'
+  }
+}
+
 async function refreshToken(user) {
 	log.info(`Refreshing token for ${user.id}`);
 	var result = await urllib.request('https://accounts.spotify.com/api/token', {
 		method: 'POST',
 		headers: {
-			'Authorization': 'Basic ' + Base64.encode(clientId + ':' + clientSecret)
+			// 'Authorization': 'Basic ' + Base64.encode(clientId + ':' + clientSecret)
+			'Authorization': authorize()
 		},
 		data: {
 			grant_type: 'refresh_token',
@@ -50,6 +71,29 @@ async function getToken(userid) {
 		user.access_token = await refreshToken(user);
 	}
 	return user.access_token;
+}
+
+async function getTracksOfArtist(userId, artistId, threshold, token=undefined)
+{
+	log.info(`Getting tracks of ${artistId}`);
+	token = token ? token : await getToken(userId);	
+	var result = await urllib.request(
+		`https://api.spotify.com/v1/artists/${artistId}/albums?` + querystring.stringify({
+			include_groups: 'album,single',
+			limit: '10'
+		}), {
+		method: 'GET',
+		headers: {
+			'Authorization': 'Bearer ' + token
+		},
+	});
+	if (result.res.statusCode != 200) { // didn't succeed
+		log.error(`Getting tracks of an artist failed: ${result.res.statusCode}: ${result.res.statusMessage}. ${result.data.toString()}`);
+		throw new APIError(result.res.statusCode);
+	}
+	var albums = JSON.parse(result.data.toString()).items;
+	albums = albums.filter(album => Date.parse(album.release_date) >= threshold);
+	return albums;
 }
 
 async function getFollowing(userid, token=undefined) {
@@ -129,4 +173,5 @@ async function createFromAll(userid) {
 module.exports = {
 	getFollowing,
 	createFromAll,
+	getTracksOfArtist,
 };

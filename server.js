@@ -66,14 +66,26 @@ var listener = app.listen(process.env.PORT, () => {
 
 // Testing
 async function test() {
+  
+
   var id = 11182739993;
+  var artistId = '7jrtLe4eVfWhYWZn5vsopg'; // Hinol Polska Wersja
+  var albumId = '2XhJJYqoUDAnfoOL6YNpLO'; // name: 'Od końca do początku',
+    
   // spotifuncs.getFollowing(id);
   // spotifuncs.createFromAll(id);
   try {
-    var artists = await spotifuncs.getFollowing(id);
-    console.log(artists);
+    // var artists = await spotifuncs.getFollowing(id);
+    // console.log(artists);
+
+    // var threshold = new Date(Date.parse('2020-05-25'));
+    // var albums = await spotifuncs.getTracksOfArtist(id, artistId, threshold);
+    // console.log(albums);
+
   } catch (error) {
     log.error(error);
   }
 }
 test();
+
+//TODO filter out singles reappearing in albums
