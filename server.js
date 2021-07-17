@@ -10,6 +10,7 @@ const db = require('./database');
 const log = require('./log');
 const spotifuncs = require('./spotifuncs');
 const spotifylogin = require("./spotifylogin");
+const { getTracksOfArtist } = require("./spotifuncs");
 
 log.info('Booting up... ', new Date());
 
@@ -79,8 +80,11 @@ async function test() {
     // console.log(artists);
 
     // var threshold = new Date(Date.parse('2020-05-25'));
-    // var albums = await spotifuncs.getTracksOfArtist(id, artistId, threshold);
+    // var albums = await spotifuncs.getRecentAlbumsOfArtist(id, artistId, threshold);
     // console.log(albums);
+
+    var tracks = await spotifuncs.getTracksFromAlbum(id, albumId);
+    console.log(tracks);
 
   } catch (error) {
     log.error(error);
@@ -89,3 +93,5 @@ async function test() {
 test();
 
 //TODO filter out singles reappearing in albums
+//TODO implement paging for getting albums
+//TODO implement paging for getting tracks for albums (super-edge case)

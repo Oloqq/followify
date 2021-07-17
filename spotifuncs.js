@@ -27,7 +27,7 @@ class APIError extends Error {
 
     // Maintains proper stack trace for where our error was thrown (only available on V8)
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, CustomError)
+      Error.captureStackTrace(this, APIError)
     }
 
     this.name = 'APIError'
@@ -73,9 +73,29 @@ async function getToken(userid) {
 	return user.access_token;
 }
 
-async function getTracksOfArtist(userId, artistId, threshold, token=undefined)
-{
-	log.info(`Getting tracks of ${artistId}`);
+async function getTracksFromAlbum(userId, albumId, token=undefined) {
+	log.info(`Getting tracks of album ${albumId}`);
+	token = token ? token : await getToken(userId);	
+	//https://api.spotify.com/v1/albums/{id}/tracks
+	var result = await urllib.request(
+		`https://api.spotify.com/v1/albums/${albumId}/tracks?` + querystring.stringify({
+			limit: '50'
+		}), {
+		method: 'GET',
+		headers: {
+			'Authorization': 'Bearer ' + token
+		},
+	});
+	if (result.res.statusCode != 200) { // didn't succeed
+		log.error(`Getting tracks from album failed: ${result.res.statusCode}: ${result.res.statusMessage}. ${result.data.toString()}`);
+		throw new APIError(result.res.statusCode);
+	}
+	var tracks = JSON.parse(result.data.toString()).items;
+	return tracks;
+}
+
+async function getRecentAlbumsOfArtist(userId, artistId, threshold, token=undefined) {
+	log.info(`Getting recent (${threshold.toISOString()}) albums of ${artistId}`);
 	token = token ? token : await getToken(userId);	
 	var result = await urllib.request(
 		`https://api.spotify.com/v1/artists/${artistId}/albums?` + querystring.stringify({
@@ -88,7 +108,7 @@ async function getTracksOfArtist(userId, artistId, threshold, token=undefined)
 		},
 	});
 	if (result.res.statusCode != 200) { // didn't succeed
-		log.error(`Getting tracks of an artist failed: ${result.res.statusCode}: ${result.res.statusMessage}. ${result.data.toString()}`);
+		log.error(`Getting recent albums of an artist failed: ${result.res.statusCode}: ${result.res.statusMessage}. ${result.data.toString()}`);
 		throw new APIError(result.res.statusCode);
 	}
 	var albums = JSON.parse(result.data.toString()).items;
@@ -167,11 +187,13 @@ async function createFromAll(userid) {
 	var token = await getToken(userid);
 
 	// var playlist = await createPlaylist(userid, "testlist", token=token);
-	var artists = await getFollowing(userid, token=token);
+	// var artists = await getFollowing(userid, token=token);
 }
 
 module.exports = {
 	getFollowing,
 	createFromAll,
-	getTracksOfArtist,
+	getRecentAlbumsOfArtist,
+	getTracksFromAlbum,
+	APIError,
 };
