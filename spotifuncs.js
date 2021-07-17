@@ -10,7 +10,12 @@ const { getExpiry } = require('./spotifylogin');
 const clientId     = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 
+function isValidDate(d) {
+  return d instanceof Date && !isNaN(d);
+}
+
 async function refreshToken(user) {
+	log.info(`Refreshing token for ${user.id}`);
 	var result = await urllib.request('https://accounts.spotify.com/api/token', {
 		method: 'POST',
 		headers: {
@@ -20,7 +25,12 @@ async function refreshToken(user) {
 			grant_type: 'refresh_token',
 			refresh_token: user.refresh_token
 		},
-	})
+	});
+	if (result.res.statusCode != 200) { // didn't succeed
+		log.error(`Failed refreshing token for ${user.id}: ${result.res.statusCode}: ${result.res.statusMessage}. ${result.data.toString()}`);
+		return undefined;
+	}
+
 	var data = JSON.parse(result.data.toString());
 	var refresh_token = data.refresh_token || user.refresh_token;
 	if (data.refresh_token) {
@@ -31,12 +41,12 @@ async function refreshToken(user) {
 }
 
 async function getToken(userid) {
+	log.info(`Getting token for ${userid}`);
 	var user = await db.getUser(userid);
 	var expiry = new Date(user.expiry);
 	var now = new Date();
-	// console.log(expiry, now);
-	now.setMinutes(now.getMinutes() - 1);
-	if (now > expiry) {
+	now.setMinutes(now.getMinutes() - 1); // make sure token won't expire mid operation
+	if (!isValidDate(expiry) || now > expiry) {
 		user.access_token = await refreshToken(user);
 	}
 	return user.access_token;
@@ -57,7 +67,13 @@ async function getFollowing(userid, token=undefined) {
 			headers: {
 				'Authorization': 'Bearer ' + token
 			},
-		})
+		});
+
+		if (result.res.statusCode != 200) { // didn't succeed
+			log.error(`Getting followed artists failed: ${result.res.statusCode}: ${result.res.statusMessage}. ${result.data.toString()}`);
+			return artists;
+		}
+
 		var data = JSON.parse(result.data.toString()).artists;
 		data.items.forEach(artist => {
 			artists.push({id: artist.id, name: artist.name});

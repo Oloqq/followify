@@ -9,6 +9,7 @@ const useragent = require('express-useragent');
 const db = require('./database');
 const log = require('./log');
 const spotifuncs = require('./spotifuncs');
+const spotifylogin = require("./spotifylogin");
 
 log.info('Booting up... ', new Date());
 
@@ -64,6 +65,15 @@ var listener = app.listen(process.env.PORT, () => {
 });
 
 // Testing
-var id = 11182739993;
-// spotifuncs.getFollowing(id);
-spotifuncs.createFromAll(id);
+async function test() {
+  var id = 11182739993;
+  // spotifuncs.getFollowing(id);
+  // spotifuncs.createFromAll(id);
+  try {
+    var artists = await spotifuncs.getFollowing(id);
+    console.log(artists);
+  } catch (error) {
+    log.error(error);
+  }
+}
+test();
