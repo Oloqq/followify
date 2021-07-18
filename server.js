@@ -92,15 +92,15 @@ async function test() {
     // var playlistId = await spotifuncs.createPlaylist(id, 'Test z hinolem');
     // console.log(playlistId);
 
-    spotifuncs.addTracksToPlaylist(id, playlistId, uris);
+    // spotifuncs.addTracksToPlaylist(id, playlistId, uris);
+
+    spotifuncs.createFromAll(id);
 
   } catch (error) {
     log.error(error);
   }
 }
 test();
-
-//! it seems the date inserted into the database is always invalid
 
 //TODO rename userid to userId
 //TODO filter out singles reappearing in albums
