@@ -23,6 +23,7 @@ async function putUser(id, accessToken, expiresIn, refreshToken) {
 
 module.exports = {
 	getExpiry,
+	putUser,
 	setupLogin: function(app, scopes) {
 		var scope = '';
 		for (let s of scopes) {

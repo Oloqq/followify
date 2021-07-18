@@ -5,7 +5,7 @@ const querystring = require('querystring');
 const db = require('./database');
 const log = require('./log');
 const { Base64 } = require('js-base64');
-const { getExpiry } = require('./spotifylogin');
+const { putUser } = require('./spotifylogin');
 const { query } = require('express');
 
 const clientId     = process.env.SPOTIFY_CLIENT_ID;
@@ -39,7 +39,6 @@ async function refreshToken(user) {
 	var result = await urllib.request('https://accounts.spotify.com/api/token', {
 		method: 'POST',
 		headers: {
-			// 'Authorization': 'Basic ' + Base64.encode(clientId + ':' + clientSecret)
 			'Authorization': authorize()
 		},
 		data: {
@@ -57,7 +56,7 @@ async function refreshToken(user) {
 	if (data.refresh_token) {
 		log.info('refreshing token generated new refresh token for user ', user.id);
 	}
-	db.putUser(user.id, data.access_token, getExpiry(data.expires_in), refresh_token);
+	putUser(user.id, data.access_token, data.expires_in, refresh_token);
 	return data.access_token;
 }
 
