@@ -82,7 +82,7 @@ async function test() {
     // var artists = await spotifuncs.getFollowing(id);
     // console.log(artists);
 
-    // var threshold = new Date(Date.parse('2020-05-25'));
+    var threshold = new Date(Date.parse('2021-06-25'));
     // var albums = await spotifuncs.getRecentAlbumsOfArtist(id, artistId, threshold);
     // console.log(albums);
 
@@ -95,6 +95,7 @@ async function test() {
     // spotifuncs.addTracksToPlaylist(id, playlistId, uris);
 
     spotifuncs.createFromAll(id);
+    // console.log(await spotifuncs.getRecentTracksOfArtists(id, [artistId], threshold));
 
   } catch (error) {
     log.error(error);
@@ -103,7 +104,11 @@ async function test() {
 test();
 
 //TODO rename userid to userId
+//TODO move result handling to APIError class
 //TODO filter out singles reappearing in albums
+
+//TODO use try-again instead of limiting program to synchronous
+
 //TODO implement paging for getting albums
 //TODO implement paging for getting tracks for albums (super-edge case)
 //TODO pack the request stuff into a function? (mby a nested one?)
