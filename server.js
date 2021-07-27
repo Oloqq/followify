@@ -103,11 +103,11 @@ async function test() {
 }
 test();
 
-//TODO rename userid to userId
 //TODO move result handling to APIError class
 //TODO filter out singles reappearing in albums
 
 //TODO use try-again instead of limiting program to synchronous
+//TODO one track can be added twice when two followed artist are on it
 
 //TODO implement paging for getting albums
 //TODO implement paging for getting tracks for albums (super-edge case)

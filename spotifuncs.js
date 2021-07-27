@@ -60,9 +60,9 @@ async function refreshToken(user) {
 	return data.access_token;
 }
 
-async function getToken(userid) {
-	log.info(`Getting token for ${userid}`);
-	var user = await db.getUser(userid);
+async function getToken(userId) {
+	log.info(`Getting token for ${userId}`);
+	var user = await db.getUser(userId);
 	var expiry = new Date(user.expiry);
 	var now = new Date();
 	now.setMinutes(now.getMinutes() - 1); // make sure token won't expire mid operation
@@ -135,9 +135,9 @@ async function getRecentAlbumsOfArtist(userId, artistId, threshold, token=undefi
 	return albums;
 }
 
-async function getFollowing(userid, token=undefined) {
-	log.info(`Getting following of ${userid}`);
-	token = token ? token : await getToken(userid);
+async function getFollowing(userId, token=undefined) {
+	log.info(`Getting following of ${userId}`);
+	token = token ? token : await getToken(userId);
 	var artists = [];
 	var url = 'https://api.spotify.com/v1/me/following?' + querystring.stringify({
 		type: 'artist',
@@ -171,12 +171,12 @@ async function getFollowing(userid, token=undefined) {
 	return artists;
 }
 
-async function createPlaylist(userid, name, description, token=undefined)
+async function createPlaylist(userId, name, description, token=undefined)
 {
-	log.info(`Creating playlist. user=${userid}, playlist name=${name}`);
+	log.info(`Creating playlist. user=${userId}, playlist name=${name}`);
 
-	token = token ? token : await getToken(userid);
-	let result = await urllib.request(`https://api.spotify.com/v1/users/${userid}/playlists`, {
+	token = token ? token : await getToken(userId);
+	let result = await urllib.request(`https://api.spotify.com/v1/users/${userId}/playlists`, {
 		method: 'POST',
 		headers: {
 			'Authorization': 'Bearer ' + token,
@@ -191,7 +191,7 @@ async function createPlaylist(userid, name, description, token=undefined)
 
 	if (result.res.statusCode != 201) { // didn't succeed
 		log.error(`Couldn't create playlist: ${result.res.statusCode}, `+
-			`user=${userid}, playlist name=${name}`)
+			`user=${userId}, playlist name=${name}`)
 		return;
 	}
 
