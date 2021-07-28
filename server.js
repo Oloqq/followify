@@ -70,11 +70,15 @@ async function test() {
   
 
   var id = 11182739993;
-  var artistId = '7jrtLe4eVfWhYWZn5vsopg'; // Hinol Polska Wersja
-  var albumId = '2XhJJYqoUDAnfoOL6YNpLO'; // name: 'Od końca do początku',
+  // var artistId = '7jrtLe4eVfWhYWZn5vsopg'; // Hinol Polska Wersja
+  // var albumId = '2XhJJYqoUDAnfoOL6YNpLO'; // name: 'Od końca do początku',
+  // var artistId =  '14M41VoNuxxvBXaigqZ9D9'; // CatchUp
+  var artistId = '4z93wkjfGntA0XFqnv4wj7'; // Pezet
+  var albumId = '2Y7UmCMczDhjEkq91V0BVR'; // Pezet - Mem (album)
   var trackId = '3SkC2BjGzfbMd65MQ2snzX' // name: 'Nie potrzeba mi nic więcej',
   var playlistId = '3QHzMmQfvuG3AQWybYyIIS';
   var uris = [`spotify:track:${trackId}`];
+  var threshold = new Date(Date.parse('2021-05-25'));
     
   // spotifuncs.getFollowing(id);
   // spotifuncs.createFromAll(id);
@@ -82,8 +86,7 @@ async function test() {
     // var artists = await spotifuncs.getFollowing(id);
     // console.log(artists);
 
-    var threshold = new Date(Date.parse('2021-06-25'));
-    // var albums = await spotifuncs.getRecentAlbumsOfArtist(id, artistId, threshold);
+    // var albums = await spotifuncs.getRecentStuffOfArtist(id, artistId, threshold, 'albums,singles');
     // console.log(albums);
 
     // var tracks = await spotifuncs.getTracksFromAlbum(id, albumId);
@@ -95,13 +98,17 @@ async function test() {
     // spotifuncs.addTracksToPlaylist(id, playlistId, uris);
 
     spotifuncs.createFromAll(id);
-    // console.log(await spotifuncs.getRecentTracksOfArtists(id, [artistId], threshold));
+
+    // console.log(await spotifuncs.getRecentTracksOfArtists(id, [artistId],
+    //    threshold, ['album', 'single']));
 
   } catch (error) {
     log.error(error);
   }
 }
 test();
+
+// spotify returns all albums first, only then singles -> make separate calls for singles and albums
 
 //TODO move result handling to APIError class
 //TODO filter out singles reappearing in albums
@@ -112,3 +119,5 @@ test();
 //TODO implement paging for getting albums
 //TODO implement paging for getting tracks for albums (super-edge case)
 //TODO pack the request stuff into a function? (mby a nested one?)
+
+//TODO add option to include appears on

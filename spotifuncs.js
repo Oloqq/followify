@@ -12,7 +12,7 @@ const clientId     = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 
 function isValidDate(d) {
-  return d instanceof Date && !isNaN(d);
+	return d instanceof Date && !isNaN(d);
 }
 
 function authorize()
@@ -21,17 +21,17 @@ function authorize()
 }
 
 class APIError extends Error {
-  constructor(...params) {
-    // Pass remaining arguments (including vendor specific ones) to parent constructor
-    super(...params)
+	constructor(...params) {
+		// Pass remaining arguments (including vendor specific ones) to parent constructor
+		super(...params)
 
-    // Maintains proper stack trace for where our error was thrown (only available on V8)
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, APIError)
-    }
+		// Maintains proper stack trace for where our error was thrown (only available on V8)
+		if (Error.captureStackTrace) {
+			Error.captureStackTrace(this, APIError)
+		}
 
-    this.name = 'APIError'
-  }
+		this.name = 'APIError'
+	}
 }
 
 async function refreshToken(user) {
@@ -113,13 +113,16 @@ async function getTracksFromAlbum(userId, albumId, token=undefined) {
 	return tracks;
 }
 
-async function getRecentAlbumsOfArtist(userId, artistId, threshold, token=undefined) {
-	log.info(`Getting recent (${threshold.toISOString()}) albums of ${artistId}`);
+// stuffType is a comma separated list of [album,single,appears_on,compilation]
+async function getRecentStuffOfArtist(userId, artistId, threshold, stuffType,
+																			token=undefined) {
+	log.info(`Getting recent (${threshold.toISOString()}) stuff (${stuffType}) of ${artistId}`);
 	token = token ? token : await getToken(userId);	
 	var result = await urllib.request(
-		`https://api.spotify.com/v1/artists/${artistId}/albums?` + querystring.stringify({
-			include_groups: 'album,single',
-			limit: '10'
+		`https://api.spotify.com/v1/artists/${artistId}/albums?` 
+		+ querystring.stringify({
+			include_groups: stuffType,
+			limit: '10',			
 		}), {
 		method: 'GET',
 		headers: {
@@ -127,7 +130,9 @@ async function getRecentAlbumsOfArtist(userId, artistId, threshold, token=undefi
 		},
 	});
 	if (result.res.statusCode != 200) { // didn't succeed
-		log.error(`Getting recent albums of an artist failed: ${result.res.statusCode}: ${result.res.statusMessage}. ${result.data.toString()}`);
+		log.error(`Getting recent albums of an artist failed: `,
+							`${result.res.statusCode}: ${result.res.statusMessage} `,
+							`${result.data.toString()}`);
 		throw new APIError(result.res.statusCode);
 	}
 	var albums = JSON.parse(result.data.toString()).items;
@@ -199,35 +204,24 @@ async function createPlaylist(userId, name, description, token=undefined)
 	return data.id;
 }
 
-async function getRecentTracksOfArtists(userId, artists, threshold, token=undefined) {
+async function getRecentTracksOfArtists(userId, artists, threshold, types, token=undefined) {
 	//TODO use try-again instead of limiting program to synchronous
 	// Using asynchronous calls to the API causes 429: Too Many Requests
+
 	log.info(`Getting recent (${threshold}) tracks of artists ${artists} for user ${userId}`);
 	token = token ? token : await getToken(userId);
-
 	var tracks = [];
+	
 	for (let ar = 0; ar < artists.length; ar++) {
-		var albums = await getRecentAlbumsOfArtist(userId, artists[ar], threshold, token=token);
-		for (let al = 0; al < albums.length; al++) {
-			var t = await getTracksFromAlbum(userId, albums[al].id, token=token);
-			// log.info('push', t);
-			tracks = tracks.concat(t);
+		for (let type of types) {
+			console.log(type);
+			let albums = await getRecentStuffOfArtist(userId, artists[ar], threshold, type, token=token);
+			for (let al = 0; al < albums.length; al++) {
+				let t = await getTracksFromAlbum(userId, albums[al].id, token=token);
+				tracks = tracks.concat(t);
+			}
 		}
 	}
-	
-
-	// artists.forEach(artist => {
-	// 	var albums = await getRecentAlbumsOfArtist(userId, artist.id, threshold, token=token);
-	// 	albums.forEach(album => {
-	// 		tracks.push(await getTracksFromAlbum(userId, album.id, token=token));
-	// 	});
-	// });
-	// artists.map(async artist => {
-	// 	var albums = await getRecentAlbumsOfArtist(userId, artist.id, threshold, token=token);
-	// 	albums.map(async album => {
-	// 		tracks.push(await getTracksFromAlbum(userId, album.id, token=token));
-	// 	});
-	// });
 	return tracks;
 }
 
@@ -244,6 +238,7 @@ async function createFromAll(userId) {
 	// promList.push('3QHzMmQfvuG3AQWybYyIIS'); // temp
 	var playlistPromise = createPlaylist(userId, "🚂New stuff", `🚂${new Date()}🚂`, token=token);
 	var artists = await getFollowing(userId, token=token);
+	log.info(`Artists ${artists.map(artist => artist.name)}`);
 	artists = artists.map(artist => artist.id);
 	var tracks = await getRecentTracksOfArtists(userId, artists, threshold, token=token);
 	var playlistId = await Promise.resolve(playlistPromise);
@@ -298,7 +293,7 @@ async function createFromAll(userId) {
 module.exports = {
 	getFollowing,
 	createFromAll,
-	getRecentAlbumsOfArtist,
+	getRecentStuffOfArtist,
 	getTracksFromAlbum,
 	APIError,
 	addTracksToPlaylist,
