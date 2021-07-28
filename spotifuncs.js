@@ -7,6 +7,8 @@ const log = require('./log');
 const { Base64 } = require('js-base64');
 const { putUser } = require('./spotifylogin');
 const { query } = require('express');
+const randomEmoji = require('./random-emoji');
+const utils = require('./utils');
 
 const clientId     = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
@@ -87,7 +89,7 @@ async function addTracksToPlaylist(userId, playlistId, tracks, token=undefined) 
 	});
 
 	if (result.res.statusCode != 201) { // didn't succeed (201 == created)
-		log.error(`Couldn't add to playlist: ${result.res.statusCode}, `+
+		log.error(`Couldn't add to playlist: ${result.res.statusCode}: ${result.res.statusMessage}, `+
 			`playlist=${playlistId}, tracks=${tracks}`);
 		throw new APIError(result.res.statusCode);
 	}
@@ -213,6 +215,8 @@ async function getRecentTracksOfArtists(userId, artists, threshold, types, token
 	var tracks = [];
 	
 	for (let ar = 0; ar < artists.length; ar++) {
+		// separate callls for each type, instead of combined, beacause spotify
+		// groups by type and only then by date
 		for (let type of types) {
 			console.log(type);
 			let albums = await getRecentStuffOfArtist(userId, artists[ar], threshold, type, token=token);
@@ -233,19 +237,26 @@ async function createFromAll(userId) {
 	var uris = [];
 
 	// temp
-	var threshold = new Date(Date.parse('2021-06-25'));
+	var threshold = new Date(Date.parse('2021-05-25'));
+	var emoji = randomEmoji();
+	// var train = '🚂';
 	
 	// promList.push('3QHzMmQfvuG3AQWybYyIIS'); // temp
-	var playlistPromise = createPlaylist(userId, "🚂New stuff", `🚂${new Date()}🚂`, token=token);
+	var playlistPromise = createPlaylist(userId, `${emoji}New stuff`, `${emoji}${new Date()}${emoji}`, token=token);
 	var artists = await getFollowing(userId, token=token);
 	log.info(`Artists ${artists.map(artist => artist.name)}`);
 	artists = artists.map(artist => artist.id);
-	var tracks = await getRecentTracksOfArtists(userId, artists, threshold, token=token);
+	var tracks = await getRecentTracksOfArtists(userId, artists, threshold, ['album', 'single'], token=token);
 	var playlistId = await Promise.resolve(playlistPromise);
 
 	console.log(tracks.length);
 	uris = tracks.map(track => `spotify:track:${track.id}`);
-	addTracksToPlaylist(userId, playlistId, uris, token=token);
+	chunks = utils.chunkify(uris, 100);
+
+	for (let i = 0; i <= Math.floor(chunks.length / 100); i++) {
+		addTracksToPlaylist(userId, playlistId, chunks[i], token=token);
+	}
+	// addTracksToPlaylist(userId, playlistId, uris, token=token);
 
 	// promList.push(getFollowing(userId, token=token)
 	// .then(artists => {
