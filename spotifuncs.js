@@ -228,27 +228,25 @@ async function getRecentTracksOfArtists(userId, artists, threshold, types, token
 	return tracks;
 }
 
-async function createFromAll(userId) {
+async function createFromAll(userId, threshold, contentTypes) {
 	// Using asynchronous calls to the API causes 429: Too Many Requests
-	log.info(`Creating playlist from all artists for user ${userId}`);
+	log.info(`Creating playlist from all artists for user ${userId}, from stuff (${contentTypes}) since ${threshold}`);
 	var token = await getToken(userId);
 	var tracks = [];
 	var uris = [];
 
-	var threshold = new Date('2021-07-20');
 	var emoji = randomEmoji();
-	
-	var playlistPromise = createPlaylist(userId, `${emoji}New stuff`, `${emoji}${new Date()}${emoji}`, token);
+	var playlistName = `${emoji}New stuff`;
+	var playlistDescription = `${emoji}${new Date()}${emoji}`;
+
+	var playlistPromise = createPlaylist(userId, playlistName, playlistDescription, token);
 	var artists = await getFollowing(userId, token);
-	log.info(`Artists ${artists.map(artist => artist.name)}`);
-	var tracks = await getRecentTracksOfArtists(userId, artists, threshold, ['album', 'single'], token);
+	var tracks = await getRecentTracksOfArtists(userId, artists, threshold, contentTypes, token);
 	var playlistId = await Promise.resolve(playlistPromise);
 
-	console.log(tracks.length);
-	const chunkLen = 100;
+	const chunkLen = 100; // 100 is the max accepted by spotify API
 	uris = tracks.map(track => `spotify:track:${track.id}`);
 	chunks = utils.chunkify(uris, chunkLen);
-
 	for (let i = 0; i < chunks.length; i++) {
 		await addTracksToPlaylist(userId, playlistId, chunks[i], i*chunkLen, token);
 	}

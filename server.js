@@ -106,7 +106,7 @@ async function test() {
     //   spotifuncs.addTracksToPlaylist(id, playlistId, chunks[i]);
     // }
 
-    spotifuncs.createFromAll(id);
+    spotifuncs.createFromAll(id, new Date('2021-07-20'), ['album', 'single']);
 
     // console.log(await spotifuncs.getRecentTracksOfArtists(id, [artistId],
     //    threshold, ['album', 'single']));
@@ -119,6 +119,10 @@ test();
 
 // unit testing
 //https://mochajs.org/
+
+//Ctrl+Alt+D Ctrl+Alt+D to create documentation template
+
+//TODO addTracksToPlaylist should handle doing chunks by itself
 
 //TODO transfer to typescript
 
