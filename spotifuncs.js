@@ -74,8 +74,8 @@ async function getToken(userId) {
 	return user.access_token;
 }
 
-async function addTracksToPlaylist(userId, playlistId, tracks, token=undefined) {
-	log.info(`Adding tracks ${tracks} to playlist ${playlistId}`);
+async function addTracksToPlaylist(userId, playlistId, tracks, position=0, token=undefined) {
+	log.info(`Adding tracks ${tracks} to playlist ${playlistId} at position ${position}`);
 	token = token ? token : await getToken(userId);	
 	let result = await urllib.request(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
 		method: 'POST',
@@ -84,12 +84,14 @@ async function addTracksToPlaylist(userId, playlistId, tracks, token=undefined) 
 			'Content-Type': 'application/json'
 		},
 		data: {
-			'uris': tracks
+			'uris': tracks,
+			'position': position
 		}
 	});
 
 	if (result.res.statusCode != 201) { // didn't succeed (201 == created)
 		log.error(`Couldn't add to playlist: ${result.res.statusCode}: ${result.res.statusMessage}, `+
+		  `${result.data.toString()}` +
 			`playlist=${playlistId}, tracks=${tracks}`);
 		throw new APIError(result.res.statusCode);
 	}
@@ -250,11 +252,12 @@ async function createFromAll(userId) {
 	var playlistId = await Promise.resolve(playlistPromise);
 
 	console.log(tracks.length);
+	const chunkLen = 100;
 	uris = tracks.map(track => `spotify:track:${track.id}`);
-	chunks = utils.chunkify(uris, 100);
+	chunks = utils.chunkify(uris, chunkLen);
 
-	for (let i = 0; i <= Math.floor(chunks.length / 100); i++) {
-		addTracksToPlaylist(userId, playlistId, chunks[i], token=token);
+	for (let i = 0; i < chunks.length; i++) {
+		await addTracksToPlaylist(userId, playlistId, chunks[i], i*chunkLen, token=token);
 	}
 	// addTracksToPlaylist(userId, playlistId, uris, token=token);
 

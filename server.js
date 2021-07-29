@@ -120,6 +120,9 @@ test();
 // unit testing
 //https://mochajs.org/
 
+//! addTracksToPlaylist(userId, playlistId, chunks[i], i*chunkLen, token=token);
+//! token=token is not valid syntax in js XDDDDDDDebilu
+
 //TODO move result handling to APIError class
 //TODO filter out singles reappearing in albums
 
