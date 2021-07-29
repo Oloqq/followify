@@ -221,9 +221,9 @@ async function getRecentTracksOfArtists(userId, artists, threshold, types, token
 		// groups by type and only then by date
 		for (let type of types) {
 			console.log(type);
-			let albums = await getRecentStuffOfArtist(userId, artists[ar], threshold, type, token=token);
+			let albums = await getRecentStuffOfArtist(userId, artists[ar], threshold, type, token);
 			for (let al = 0; al < albums.length; al++) {
-				let t = await getTracksFromAlbum(userId, albums[al].id, token=token);
+				let t = await getTracksFromAlbum(userId, albums[al].id, token);
 				tracks = tracks.concat(t);
 			}
 		}
@@ -239,16 +239,16 @@ async function createFromAll(userId) {
 	var uris = [];
 
 	// temp
-	var threshold = new Date(Date.parse('2021-05-25'));
+	var threshold = new Date(Date.parse('2021-01-25'));
 	var emoji = randomEmoji();
 	// var train = '🚂';
 	
 	// promList.push('3QHzMmQfvuG3AQWybYyIIS'); // temp
-	var playlistPromise = createPlaylist(userId, `${emoji}New stuff`, `${emoji}${new Date()}${emoji}`, token=token);
-	var artists = await getFollowing(userId, token=token);
+	var playlistPromise = createPlaylist(userId, `${emoji}New stuff`, `${emoji}${new Date()}${emoji}`, token);
+	var artists = await getFollowing(userId, token);
 	log.info(`Artists ${artists.map(artist => artist.name)}`);
 	artists = artists.map(artist => artist.id);
-	var tracks = await getRecentTracksOfArtists(userId, artists, threshold, ['album', 'single'], token=token);
+	var tracks = await getRecentTracksOfArtists(userId, artists, threshold, ['album', 'single'], token);
 	var playlistId = await Promise.resolve(playlistPromise);
 
 	console.log(tracks.length);
@@ -257,18 +257,18 @@ async function createFromAll(userId) {
 	chunks = utils.chunkify(uris, chunkLen);
 
 	for (let i = 0; i < chunks.length; i++) {
-		await addTracksToPlaylist(userId, playlistId, chunks[i], i*chunkLen, token=token);
+		await addTracksToPlaylist(userId, playlistId, chunks[i], i*chunkLen, token);
 	}
-	// addTracksToPlaylist(userId, playlistId, uris, token=token);
+	// addTracksToPlaylist(userId, playlistId, uris, token);
 
-	// promList.push(getFollowing(userId, token=token)
+	// promList.push(getFollowing(userId, token)
 	// .then(artists => {
 	// 	artists.map(artist => {
-	// 		getRecentAlbumsOfArtist(userId, artist.id, threshold, token=token)
+	// 		getRecentAlbumsOfArtist(userId, artist.id, threshold, token)
 	// 		.then(albums => {
 	// 			albums.map(album => {
 	// 				promList.push(
-	// 					getTracksFromAlbum(userId, album.id, token=token)
+	// 					getTracksFromAlbum(userId, album.id, token)
 	// 					.catch(err => { log.error('err')} ));
 	// 			})
 	// 		})
