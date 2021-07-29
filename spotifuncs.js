@@ -209,9 +209,7 @@ async function createPlaylist(userId, name, description, token=undefined)
 }
 
 async function getRecentTracksOfArtists(userId, artists, threshold, types, token=undefined) {
-	//TODO use try-again instead of limiting program to synchronous
 	// Using asynchronous calls to the API causes 429: Too Many Requests
-
 	log.info(`Getting recent (${threshold}) tracks of artists ${artists} for user ${userId}`);
 	token = token ? token : await getToken(userId);
 	var tracks = [];
@@ -220,8 +218,7 @@ async function getRecentTracksOfArtists(userId, artists, threshold, types, token
 		// separate callls for each type, instead of combined, beacause spotify
 		// groups by type and only then by date
 		for (let type of types) {
-			console.log(type);
-			let albums = await getRecentStuffOfArtist(userId, artists[ar], threshold, type, token);
+			let albums = await getRecentStuffOfArtist(userId, artists[ar].id, threshold, type, token);
 			for (let al = 0; al < albums.length; al++) {
 				let t = await getTracksFromAlbum(userId, albums[al].id, token);
 				tracks = tracks.concat(t);
@@ -238,16 +235,12 @@ async function createFromAll(userId) {
 	var tracks = [];
 	var uris = [];
 
-	// temp
-	var threshold = new Date(Date.parse('2021-01-25'));
+	var threshold = new Date('2021-07-20');
 	var emoji = randomEmoji();
-	// var train = '🚂';
 	
-	// promList.push('3QHzMmQfvuG3AQWybYyIIS'); // temp
 	var playlistPromise = createPlaylist(userId, `${emoji}New stuff`, `${emoji}${new Date()}${emoji}`, token);
 	var artists = await getFollowing(userId, token);
 	log.info(`Artists ${artists.map(artist => artist.name)}`);
-	artists = artists.map(artist => artist.id);
 	var tracks = await getRecentTracksOfArtists(userId, artists, threshold, ['album', 'single'], token);
 	var playlistId = await Promise.resolve(playlistPromise);
 
@@ -259,49 +252,6 @@ async function createFromAll(userId) {
 	for (let i = 0; i < chunks.length; i++) {
 		await addTracksToPlaylist(userId, playlistId, chunks[i], i*chunkLen, token);
 	}
-	// addTracksToPlaylist(userId, playlistId, uris, token);
-
-	// promList.push(getFollowing(userId, token)
-	// .then(artists => {
-	// 	artists.map(artist => {
-	// 		getRecentAlbumsOfArtist(userId, artist.id, threshold, token)
-	// 		.then(albums => {
-	// 			albums.map(album => {
-	// 				promList.push(
-	// 					getTracksFromAlbum(userId, album.id, token)
-	// 					.catch(err => { log.error('err')} ));
-	// 			})
-	// 		})
-	// 		.catch(err => {
-	// 			log.error(`Couldn't get recent albums of ${artist.id}. User: ${userId}. ${err}`);
-	// 		})
-	// 	})
-	// })
-	// .catch(err => {
-	// 	log.error(`Couldn't get followed artists of ${userId}`)
-	// }));
-
-	// Promise.all(promList).then(values => {
-	// 	var playlistId = values.shift();
-	// 	values.shift(); // get rid of getFollowing promise
-	// 	var uris = values.map(val => `spotify:track:${val.id}`);
-	// 	addTracksToPlaylist(userId, playlistId, uris)
-	// 	.catch(err => {
-	// 		log.error(`Adding tracks to playlist: user=${userId}, playlist=${playlistId}, uris=${uris}`);
-	// 	})
-	// })
-	// .catch(err => {
-	// 	log.error(`Creating from all failed for ${userId}`);
-	// });
-
-	// try {
-	// 	var values = await Promise.all(promList);
-	// 	var playlistId = values.shift();
-	// 	var uris = values.map(val => `spotify:track:${val.id}`);
-	// 	await addTracksToPlaylist(userId, playlistId, uris);
-	// } catch (error) {
-	// 	log.error(`Creating from all failed for ${userId}, playlist ${playlistId}`);
-	// }
 }
 
 module.exports = {

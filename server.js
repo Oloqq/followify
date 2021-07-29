@@ -120,8 +120,7 @@ test();
 // unit testing
 //https://mochajs.org/
 
-//! addTracksToPlaylist(userId, playlistId, chunks[i], i*chunkLen, token=token);
-//! token=token is not valid syntax in js XDDDDDDDebilu
+//TODO transfer to typescript
 
 //TODO move result handling to APIError class
 //TODO filter out singles reappearing in albums
@@ -133,4 +132,4 @@ test();
 //TODO implement paging for getting tracks for albums (super-edge case)
 //TODO pack the request stuff into a function? (mby a nested one?)
 
-//TODO add option to include appears on
+//TODO add option to include appears on (and an option: only songs with the artist, because otherwise whole album will be included even if the artist contributed to just one song)
