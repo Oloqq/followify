@@ -1,5 +1,5 @@
 var assert = require('assert');
-var utils = require('../utils')
+var utils = require('../src/utils')
 
 describe('utils', function() {
   describe('#chunkify()', function() {
