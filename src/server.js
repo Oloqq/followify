@@ -115,7 +115,7 @@ async function test() {
     log.error(error);
   }
 }
-test();
+// test();
 
 // unit testing
 //https://mochajs.org/
