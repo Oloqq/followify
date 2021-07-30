@@ -34,7 +34,7 @@ const scopes = ['user-follow-read', 'playlist-modify-public',
 require('./spotifylogin').setupLogin(app, scopes);
 
 // Routing
-app.get('/', (req, res)=>{
+app.get('/', (req: any, res: any)=>{
   if (!req.session.userid) {
     res.sendFile(`${__dirname}/views/login.html`);
   } else {
@@ -46,7 +46,7 @@ app.get('/', (req, res)=>{
   }
 });
 
-app.get('/following', (req, res) => {
+app.get('/following', (req: any, res: any) => {
   if (!req.session.userid) {
     res.send({
       status: 'error',
@@ -55,7 +55,7 @@ app.get('/following', (req, res) => {
     return;
   } else {
     spotifuncs.getFollowing(req.session.userid)
-    .then((result)=>{
+    .then((result: any)=>{
       res.send(result);
     });
   }
