@@ -8,6 +8,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node src/server.js",
+    "build": "tsc -p tsconfig.json",
     "test": "mocha"
   },
   "dependencies": {
