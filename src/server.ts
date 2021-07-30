@@ -35,13 +35,13 @@ require('./spotifylogin').setupLogin(app, scopes);
 
 // Routing
 app.get('/', (req: any, res: any)=>{  
-  if (!req.session.userid) {
-    res.sendFile(`${__dirname}/views/login.html`);
+  if (!req.session.userid) {    
+    res.sendFile(`/views/login.html`);
   } else {
     if (req.useragent.isMobile) {
-      res.sendFile(`${__dirname}/views/index-mobile.html`);
+      res.sendFile(`$/views/index-mobile.html`);
     } else {
-      res.sendFile(`${__dirname}/views/index.html`);
+      res.sendFile(`$/views/index.html`);
     }
   }
 });
@@ -88,6 +88,8 @@ async function test() {
   // spotifuncs.getFollowing(id);
   // spotifuncs.createFromAll(id);
   try {
+    var u = await db.getUser(id);
+    log.info(u);
     // var artists = await spotifuncs.getFollowing(id);
     // console.log(artists);
 
@@ -106,7 +108,7 @@ async function test() {
     //   spotifuncs.addTracksToPlaylist(id, playlistId, chunks[i]);
     // }
 
-    spotifuncs.createFromAll(id, new Date('2021-07-20'), ['album', 'single']);
+    // spotifuncs.createFromAll(id, new Date('2021-07-20'), ['album', 'single']);
 
     // console.log(await spotifuncs.getRecentTracksOfArtists(id, [artistId],
     //    threshold, ['album', 'single']));
@@ -115,7 +117,8 @@ async function test() {
     log.error(error);
   }
 }
-// test();
+test();
+
 
 // unit testing
 //https://mochajs.org/
