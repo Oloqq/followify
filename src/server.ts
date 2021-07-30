@@ -34,7 +34,7 @@ const scopes = ['user-follow-read', 'playlist-modify-public',
 require('./spotifylogin').setupLogin(app, scopes);
 
 // Routing
-app.get('/', (req: any, res: any)=>{
+app.get('/', (req: any, res: any)=>{  
   if (!req.session.userid) {
     res.sendFile(`${__dirname}/views/login.html`);
   } else {
