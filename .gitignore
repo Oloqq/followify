@@ -4,3 +4,4 @@ env.ps1
 *.log
 logs/
 test.js
+env.env

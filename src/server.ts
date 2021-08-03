@@ -1,5 +1,11 @@
 'use strict';
 
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
+import { Request, Response } from "express";
+
 // Dependecies
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -34,7 +40,7 @@ const scopes = ['user-follow-read', 'playlist-modify-public',
 require('./spotifylogin').setupLogin(app, scopes);
 
 // Routing
-app.get('/', (req: any, res: any)=>{  
+app.get('/', (req: any, res: Response)=> {
   if (!req.session.userid) {    
     res.sendFile(`/views/login.html`);
   } else {
@@ -117,7 +123,7 @@ async function test() {
     log.error(error);
   }
 }
-test();
+// test();
 
 
 // unit testing
