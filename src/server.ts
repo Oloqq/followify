@@ -42,12 +42,12 @@ require('./spotifylogin').setupLogin(app, scopes);
 // Routing
 app.get('/', (req: any, res: Response)=> {
   if (!req.session.userid) {    
-    res.sendFile(`/views/login.html`);
+    res.sendFile(`${__dirname}/../views/login.html`);
   } else {
     if (req.useragent.isMobile) {
-      res.sendFile(`$/views/index-mobile.html`);
+      res.sendFile(`${__dirname}/../views/index-mobile.html`);
     } else {
-      res.sendFile(`$/views/index.html`);
+      res.sendFile(`${__dirname}/../views/index.html`);
     }
   }
 });

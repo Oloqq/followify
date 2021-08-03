@@ -9,13 +9,13 @@ const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(dbFile);
 const log = require('simple-node-logger').createSimpleLogger('logs/database.log');
 
-function putUser(id, accessToken, expiry, refreshToken) {
+function putUser(id: any, accessToken: any, expiry: any, refreshToken: any) {
 	var sql = `INSERT INTO user(id, access_token, expiry, refresh_token) 
 		VALUES (?, ?, ?, ?) 
 		ON CONFLICT(id) DO UPDATE 
 			SET access_token=?2, expiry=?3, refresh_token=?4
 			WHERE id=?1`;
-	db.run(sql, [id, accessToken, expiry, refreshToken], err => {
+	db.run(sql, [id, accessToken, expiry, refreshToken], (err: any) => {
 		if (err) {
 			log.error('Failed to put a user. ', err);
 		} else {
@@ -24,10 +24,10 @@ function putUser(id, accessToken, expiry, refreshToken) {
 	});
 }
 
-function getUser(id) {
+function getUser(id: any) {
 	var sql = `SELECT * FROM user WHERE id=${id}`;
 	return new Promise((resolve, reject) =>{
-		db.get(sql, (err, row)=>{
+		db.get(sql, (err: any, row: any)=>{
 			if (err) {
 				log.error('Failed to get user data.', err);
 				reject(false);
@@ -37,7 +37,7 @@ function getUser(id) {
 	});
 }
 
-function putArtist(id, name) {
+function putArtist(id: any, name: any) {
 	
 }
 
