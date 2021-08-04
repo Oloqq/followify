@@ -5,9 +5,12 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 import { Request, Response } from "express";
+// import useragent from "useragent";
 
 // Dependecies
-const express = require("express");
+// import express = require("express");
+import express from 'express';
+import { AddressInfo } from "net";
 const bodyParser = require("body-parser");
 const app = express();
 const session = require('express-session');
@@ -18,6 +21,12 @@ const spotifuncs = require('./spotifuncs');
 const spotifylogin = require("./spotifylogin");
 const { getTracksOfArtist } = require("./spotifuncs");
 const utils = require("./utils");
+
+declare module 'express-session' {
+  interface SessionData {
+    userid: any
+  }
+}
 
 log.info('Booting up... ', new Date());
 
@@ -40,11 +49,11 @@ const scopes = ['user-follow-read', 'playlist-modify-public',
 require('./spotifylogin').setupLogin(app, scopes);
 
 // Routing
-app.get('/', (req: any, res: Response)=> {
+app.get('/', (req: Request, res: Response)=> {
   if (!req.session.userid) {    
     res.sendFile(`${__dirname}/views/login.html`);
   } else {
-    if (req.useragent.isMobile) {
+    if (req.useragent && req.useragent.isMobile) {
       res.sendFile(`${__dirname}/views/index-mobile.html`);
     } else {
       res.sendFile(`${__dirname}/views/index.html`);
@@ -69,11 +78,11 @@ app.get('/following', (req: any, res: any) => {
 
 // Start the server
 var listener = app.listen(process.env.PORT, () => {
-  log.info(`App is listening on port ${listener.address().port}`);
+  log.info(`App is listening on port ${(listener.address() as AddressInfo).port}`);
 });
 
 // Testing
-async function test() {
+async function temp() {
   
 
   var id = 11182739993;
@@ -130,6 +139,8 @@ async function test() {
 //https://mochajs.org/
 
 //Ctrl+Alt+D Ctrl+Alt+D to create documentation template
+
+//TODO separate all routing into a dedicated directory
 
 //TODO addTracksToPlaylist should handle doing chunks by itself
 

@@ -13,6 +13,9 @@
     "test": "mocha"
   },
   "dependencies": {
+    "@types/express-session": "^1.17.4",
+    "@types/express-useragent": "^1.0.1",
+    "@types/useragent": "^2.3.1",
     "body-parser": "^1.19.0",
     "dotenv": "^10.0.0",
     "ejs": "^3.1.5",
