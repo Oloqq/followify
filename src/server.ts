@@ -5,6 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 import { Request, Response } from "express";
+
 // import useragent from "useragent";
 
 // Dependecies
@@ -22,11 +23,13 @@ const spotifylogin = require("./spotifylogin");
 const { getTracksOfArtist } = require("./spotifuncs");
 const utils = require("./utils");
 
-declare module 'express-session' {
-  interface SessionData {
-    userid: any
-  }
-}
+// import "../types/temp";
+
+// declare module 'express-session' {
+//   interface Session {
+//     userid: any
+//   }
+// }
 
 log.info('Booting up... ', new Date());
 
@@ -50,7 +53,7 @@ require('./spotifylogin').setupLogin(app, scopes);
 
 // Routing
 app.get('/', (req: Request, res: Response)=> {
-  if (!req.session.userid) {    
+  if (!req.session!.userid) {    
     res.sendFile(`${__dirname}/views/login.html`);
   } else {
     if (req.useragent && req.useragent.isMobile) {
@@ -140,6 +143,7 @@ async function temp() {
 
 //Ctrl+Alt+D Ctrl+Alt+D to create documentation template
 
+//TODO rename session userid to userId
 //TODO separate all routing into a dedicated directory
 
 //TODO addTracksToPlaylist should handle doing chunks by itself
