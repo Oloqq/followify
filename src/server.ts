@@ -13,7 +13,6 @@ import { Request, Response } from "express";
 import express from 'express';
 import { AddressInfo } from "net";
 import { Logger } from "../types/log";
-import { info } from "console";
 const bodyParser = require("body-parser");
 const app = express();
 const session = require('express-session');
