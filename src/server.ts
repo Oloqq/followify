@@ -16,7 +16,6 @@ const bodyParser = require("body-parser");
 const app = express();
 const session = require('express-session');
 const useragent = require('express-useragent');
-const db = require('./database');
 const log = require('./log');
 const spotifuncs = require('./spotifuncs');
 const spotifylogin = require("./spotifylogin");

@@ -1,6 +1,8 @@
-async function temp() {
-  
+const log = require('./log');
+const db = require('./database');
 
+
+async function temp() {
   var id = 11182739993;
   // var artistId = '7jrtLe4eVfWhYWZn5vsopg'; // Hinol Polska Wersja
   // var albumId = '2XhJJYqoUDAnfoOL6YNpLO'; // name: 'Od końca do początku',
