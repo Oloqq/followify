@@ -12,17 +12,19 @@ import { Request, Response } from "express";
 // import express = require("express");
 import express from 'express';
 import { AddressInfo } from "net";
+import { Logger } from "../types/log";
+import { info } from "console";
 const bodyParser = require("body-parser");
 const app = express();
 const session = require('express-session');
 const useragent = require('express-useragent');
-const log = require('./log');
+const log: Logger = require('./log');
 const spotifuncs = require('./spotifuncs');
 const spotifylogin = require("./spotifylogin");
 const { getTracksOfArtist } = require("./spotifuncs");
 const utils = require("./utils");
 
-log.info('Booting up... ', new Date());
+log.info('Booting up... ', Date());
 
 // App config
 app.use(express.static("public"));
