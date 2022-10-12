@@ -246,7 +246,7 @@ async function createFromAll(userId, threshold, contentTypes) {
 
 	const chunkLen = 100; // 100 is the max accepted by spotify API
 	uris = tracks.map(track => `spotify:track:${track.id}`);
-	chunks = utils.chunkify(uris, chunkLen);
+	let chunks = utils.chunkify(uris, chunkLen);
 	for (let i = 0; i < chunks.length; i++) {
 		await addTracksToPlaylist(userId, playlistId, chunks[i], i*chunkLen, token);
 	}

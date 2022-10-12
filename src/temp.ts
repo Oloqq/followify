@@ -1,5 +1,6 @@
 const log = require('./log');
 const db = require('./database');
+const spotifuncs = require('./spotifuncs')
 
 
 async function temp() {
@@ -21,8 +22,8 @@ async function temp() {
   // spotifuncs.getFollowing(id);
   // spotifuncs.createFromAll(id);
   try {
-    var u = await db.getUser(id);
-    log.info(u);
+    // var u = await db.getUser(id);
+    // log.info(u);
     // var artists = await spotifuncs.getFollowing(id);
     // console.log(artists);
 
@@ -34,14 +35,14 @@ async function temp() {
 
     // var playlistId = await spotifuncs.createPlaylist(id, 'Test z hinolem');
     // console.log(playlistId);
-    
+
     // chunks = utils.chunkify(tracks, 100);
 
     // for (let i = 0; i <= Math.floor(chunks.length / 100); i++) {
     //   spotifuncs.addTracksToPlaylist(id, playlistId, chunks[i]);
     // }
 
-    // spotifuncs.createFromAll(id, new Date('2021-07-20'), ['album', 'single']);
+    spotifuncs.createFromAll(id, new Date('2022-09-20'), ['album', 'single']);
 
     // console.log(await spotifuncs.getRecentTracksOfArtists(id, [artistId],
     //    threshold, ['album', 'single']));
