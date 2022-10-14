@@ -5,3 +5,4 @@ logs/
 test.js
 env.env
 dist/
+.env
