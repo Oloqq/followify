@@ -15,7 +15,7 @@ const bodyParser = require("body-parser");
 const app = express();
 const session = require('express-session');
 const useragent = require('express-useragent');
-const log: Logger = require('./log');
+import log from './log';
 const spotifuncs = require('./spotifuncs');
 const spotifylogin = require("./spotifylogin");
 const { getTracksOfArtist } = require("./spotifuncs");
@@ -43,7 +43,7 @@ require('./spotifylogin').setupLogin(app, scopes);
 
 // Routing
 app.get('/', (req: Request, res: Response)=> {
-  if (req.session && !req.session.userid) {    
+  if (req.session && !req.session.userid) {
     res.sendFile(`${__dirname}/views/login.html`);
   } else {
     if (req.useragent && req.useragent.isMobile) {

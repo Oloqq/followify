@@ -1,7 +1,6 @@
-const log = require('./log');
-const db = require('./database');
+import log from './log';
+import * as db from './database';
 const spotifuncs = require('./spotifuncs')
-
 
 async function temp() {
   var id = 11182739993;
@@ -47,7 +46,7 @@ async function temp() {
     // console.log(await spotifuncs.getRecentTracksOfArtists(id, [artistId],
     //    threshold, ['album', 'single']));
 
-  } catch (error) {
+  } catch (error: any) {
     log.error(error);
   }
 }

@@ -9,10 +9,10 @@ const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(dbFile);
 const log = require('simple-node-logger').createSimpleLogger('logs/database.log');
 
-function putUser(id: any, accessToken: any, expiry: any, refreshToken: any) {
-	var sql = `INSERT INTO user(id, access_token, expiry, refresh_token) 
-		VALUES (?, ?, ?, ?) 
-		ON CONFLICT(id) DO UPDATE 
+export function putUser(id: any, accessToken: any, expiry: any, refreshToken: any) {
+	var sql = `INSERT INTO user(id, access_token, expiry, refresh_token)
+		VALUES (?, ?, ?, ?)
+		ON CONFLICT(id) DO UPDATE
 			SET access_token=?2, expiry=?3, refresh_token=?4
 			WHERE id=?1`;
 	db.run(sql, [id, accessToken, expiry, refreshToken], (err: any) => {
@@ -24,7 +24,7 @@ function putUser(id: any, accessToken: any, expiry: any, refreshToken: any) {
 	});
 }
 
-function getUser(id: any) {
+export function getUser(id: any) {
 	var sql = `SELECT * FROM user WHERE id=${id}`;
 	return new Promise((resolve, reject) =>{
 		db.get(sql, (err: any, row: any)=>{
@@ -37,8 +37,8 @@ function getUser(id: any) {
 	});
 }
 
-function putArtist(id: any, name: any) {
-	
+export function putArtist(id: any, name: any) {
+
 }
 
 // function print() {
@@ -46,12 +46,6 @@ function putArtist(id: any, name: any) {
 // 		console.log(users);
 // 	})
 // }
-
-module.exports = {
-	putUser,
-	getUser,
-	putArtist,
-};
 
 //IIFEs
 (function init() {
